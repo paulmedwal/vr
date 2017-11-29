@@ -9,7 +9,10 @@ if (window.opener) {
 */
 
 function start(URIJSON) {
+  console.log("vr: start called");
+  console.log(URIJSON);
   var sceneJSONString = decodeURIComponent(URIJSON);
+  console.log(sceneJSONString);
   initVR();
 }
 
