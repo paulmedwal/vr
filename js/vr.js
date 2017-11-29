@@ -7,7 +7,7 @@ if (window.opener) {
   window.alert("This page should only be accessed through the VR Editor.");
 }
 */
-
+console.log(navigator.appVersion);
 var sceneJSONString;
 
 if (false && window.AppInventor) {
