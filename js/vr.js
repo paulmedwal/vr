@@ -10,7 +10,7 @@ if (window.opener) {
 
 var sceneJSONString;
 
-if (window.AppInventor) {
+if (false && window.AppInventor) {
   console.log(window.AppInventor.getPrivateWebViewString());
   sceneJSONString = decodeURIComponent(window.AppInventor.getPrivateWebViewString());
   console.log(sceneJSONString);
