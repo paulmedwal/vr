@@ -15,6 +15,8 @@ if (window.AppInventor) {
   sceneJSONString = decodeURIComponent(window.AppInventor.getPrivateWebViewString());
   console.log(sceneJSONString);
   initVR();
+} else {
+  console.log("window.AppInventor does not exist");
 }
 
 /*
