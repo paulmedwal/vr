@@ -386,19 +386,29 @@ function initVR() {
   }
 
   function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
+    console.log("window resize");
+    if (vrDisplay && vrDisplay.isPresenting) {
+      console.log("window resize presenting");
+      var leftEye = vrDisplay.getEyeParameters("left");
+      var rightEye = vrDisplay.getEyeParameters("right");
+      renderer.domElement.width = Math.max(leftEye.renderWidth, rightEye.renderWidth) * 2;
+      renderer.domElement.height = Math.max(leftEye.renderHeight, rightEye.renderHeight);
+    } else {
+      console.log("window resize not presenting");
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
 
-    cameraCube.aspect = window.innerWidth / window.innerHeight;
-    cameraCube.updateProjectionMatrix();
+      cameraCube.aspect = window.innerWidth / window.innerHeight;
+      cameraCube.updateProjectionMatrix();
 
-    cameraOrtho.left = -window.innerWidth / 2;
-    cameraOrtho.right = window.innerWidth / 2;
-    cameraOrtho.top = window.innerHeight / 2;
-    cameraOrtho.bottom = -window.innerHeight / 2;
-    cameraOrtho.updateProjectionMatrix();
+      cameraOrtho.left = -window.innerWidth / 2;
+      cameraOrtho.right = window.innerWidth / 2;
+      cameraOrtho.top = window.innerHeight / 2;
+      cameraOrtho.bottom = -window.innerHeight / 2;
+      cameraOrtho.updateProjectionMatrix();
 
-    vrEffect.setSize(window.innerWidth, window.innerHeight);
+      vrEffect.setSize(window.innerWidth, window.innerHeight);
+    }
   }
 
   function render() {
