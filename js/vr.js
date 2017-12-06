@@ -45,6 +45,8 @@ function initVR() {
     windowHeight = window.innerHeight;
     vrDisplay.requestPresent([{source: renderer.domElement}]).then(function() {
       console.log("requestPresent then");
+      console.log("requestPresent window.innerWidth is " + window.innerWidth);
+      console.log("requestPresent window.innerHeight is " + window.innerHeight);
     }, function(err) {
       console.log("requestPresent error");
       console.log(err);
