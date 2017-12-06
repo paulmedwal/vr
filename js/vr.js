@@ -41,7 +41,11 @@ function initVR() {
   var playSim = false;
   vrButton.addEventListener("click", function() {
     windowHeight = window.innerHeight;
-    vrDisplay.requestPresent([{source: renderer.domElement}]);
+    vrDisplay.requestPresent([{source: renderer.domElement}]).then(function() {
+    }, function(err) {
+      console.log("requestPresent error");
+      console.log(err);
+    });
   });
   playButton.addEventListener("click", function() {
     if (playSim) {
