@@ -42,6 +42,7 @@ function initVR() {
   vrButton.addEventListener("click", function() {
     windowHeight = window.innerHeight;
     vrDisplay.requestPresent([{source: renderer.domElement}]).then(function() {
+      console.log("requestPresent then");
     }, function(err) {
       console.log("requestPresent error");
       console.log(err);
