@@ -8,6 +8,8 @@ if (window.opener) {
 }
 */
 console.log(navigator.appVersion);
+console.log("window.innerWidth is " + window.innerWidth);
+console.log("window.innerHeight is " + window.innerHeight);
 var sceneJSONString;
 
 if (false && window.AppInventor) {
