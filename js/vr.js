@@ -12,7 +12,7 @@ console.log("window.innerWidth is " + window.innerWidth);
 console.log("window.innerHeight is " + window.innerHeight);
 var sceneJSONString;
 
-if (false && window.AppInventor) {
+if (window.AppInventor) {
   console.log(window.AppInventor.getPrivateWebViewString());
   sceneJSONString = decodeURIComponent(window.AppInventor.getPrivateWebViewString());
   console.log(sceneJSONString);
