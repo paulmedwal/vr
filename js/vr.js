@@ -26,6 +26,11 @@ if (window.AppInventor) {
 function ptc(string) {
   console.log("vr webview: " + string);
 }
+
+function ptc2(string, number) {
+  console.log("vr webview: " + string + " and " + number);
+}
+
 /*
 function start(URIJSON) {
   console.log("vr: start called");
