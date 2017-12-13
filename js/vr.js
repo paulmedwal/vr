@@ -23,11 +23,10 @@ if (window.AppInventor) {
   initVR();
 }
 
-/*
 function ptc(string) {
   console.log("vr webview: " + string);
 }
-
+/*
 function start(URIJSON) {
   console.log("vr: start called");
   console.log(URIJSON);
@@ -36,7 +35,7 @@ function start(URIJSON) {
   initVR();
 }
 */
-//
+
 function initVR() {
   var vrButton = document.getElementById("vr-switch");
   var playButton = document.getElementById("vr-play");
