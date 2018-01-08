@@ -42,7 +42,11 @@ function initVR() {
   vrButton.addEventListener("click", function() {
     windowHeight = window.innerHeight;
     if (vrDisplay) {
-      renderer.domElement.requestFullscreen();
+      if (renderer.domElement.requestFullscreen) {
+        renderer.domElement.requestFullscreen();
+      } else if (renderer.domElement.webkitRequestFullscreen) {
+        renderer.domElement.webkitRequestFullscreen();
+      }
       vrDisplay.requestPresent([{source: renderer.domElement}]);
       console.log("requesting fullscreen");
     } else {
