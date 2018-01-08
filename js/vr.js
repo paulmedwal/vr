@@ -42,13 +42,14 @@ function initVR() {
   vrButton.addEventListener("click", function() {
     windowHeight = window.innerHeight;
     if (vrDisplay) {
-      if (renderer.domElement.requestFullscreen) {
-        renderer.domElement.requestFullscreen();
-      } else if (renderer.domElement.webkitRequestFullscreen) {
-        renderer.domElement.webkitRequestFullscreen();
-      }
-      //vrDisplay.requestPresent([{source: renderer.domElement}]);
-      console.log("requesting fullscreen");
+      vrDisplay.requestPresent([{source: renderer.domElement}]).then(function() {
+        if (renderer.domElement.requestFullscreen) {
+          renderer.domElement.requestFullscreen();
+        } else if (renderer.domElement.webkitRequestFullscreen) {
+          renderer.domElement.webkitRequestFullscreen();
+        }
+        console.log("requesting fullscreen");
+      });
     } else {
       window.alert("VR not supported: navigator.getVRDisplays() is empty.");
     }
