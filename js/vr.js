@@ -7,7 +7,7 @@ if (window.opener) {
   window.alert("This page should only be accessed through the VR Editor.");
 }
 */
-console.log(navigator.appVersion);
+console.log(navigator.userAgent);
 console.log("window.innerWidth is " + window.innerWidth);
 console.log("window.innerHeight is " + window.innerHeight);
 var sceneJSONString;
