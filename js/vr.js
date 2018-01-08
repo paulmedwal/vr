@@ -35,7 +35,7 @@ function initVR() {
   var playSim = false;
   document.addEventListener("fullscreenchange", function() {
     console.log("fullscreenchange");
-    vrDisplay.requestPresent([{source: renderer.domElement}]);
+    setTimeout(function() {vrDisplay.requestPresent([{source: renderer.domElement}]);}, 2000);
   });
   document.addEventListener("fullscreenerror", function() {
     console.log("fullscreenerror");
