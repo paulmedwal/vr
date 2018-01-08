@@ -7,10 +7,11 @@ if (window.opener) {
   window.alert("This page should only be accessed through the VR Editor.");
 }
 */
-console.log(navigator.appVersion);
+console.log(navigator.userAgent);
 console.log("window.innerWidth is " + window.innerWidth);
 console.log("window.innerHeight is " + window.innerHeight);
 var sceneJSONString;
+var renderer;
 
 if (window.AppInventor) {
   console.log(window.AppInventor.getPrivateWebViewString());
@@ -29,9 +30,30 @@ function ptc(string) {
 
 function initVR() {
   var polyfill = new WebVRPolyfill();
+  var fullscreenButton = document.getElementById("vr-fullscreen");
   var vrButton = document.getElementById("vr-switch");
   var playButton = document.getElementById("vr-play");
   var playSim = false;
+  document.addEventListener("fullscreenchange", function() {
+    console.log("fullscreenchange");
+  });
+  document.addEventListener("webkitfullscreenchange", function() {
+    console.log("webkitfullscreenchange");
+  });
+  document.addEventListener("fullscreenerror", function() {
+    console.log("fullscreenerror");
+  });
+  document.addEventListener("webkitfullscreenerror", function() {
+    console.log("webkitfullscreenerror");
+  });
+  fullscreenButton.addEventListener("click", function() {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen();
+    }
+    console.log("requesting fullscreen");
+  });
   vrButton.addEventListener("click", function() {
     windowHeight = window.innerHeight;
     if (vrDisplay) {
@@ -49,7 +71,7 @@ function initVR() {
     playSim = !playSim;
   });
 
-  var renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer();
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   var windowHeight;
