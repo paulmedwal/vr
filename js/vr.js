@@ -11,6 +11,7 @@ console.log(navigator.appVersion);
 console.log("window.innerWidth is " + window.innerWidth);
 console.log("window.innerHeight is " + window.innerHeight);
 var sceneJSONString;
+var renderer;
 
 if (window.AppInventor) {
   console.log(window.AppInventor.getPrivateWebViewString());
@@ -57,7 +58,7 @@ function initVR() {
     playSim = !playSim;
   });
 
-  var renderer = new THREE.WebGLRenderer();
+  renderer = new THREE.WebGLRenderer();
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   var windowHeight;
