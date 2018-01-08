@@ -53,7 +53,7 @@ function initVR() {
       renderer.domElement.webkitRequestFullscreen();
     }
     console.log("requesting fullscreen");
-  }
+  });
   vrButton.addEventListener("click", function() {
     windowHeight = window.innerHeight;
     if (vrDisplay) {
