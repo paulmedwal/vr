@@ -33,10 +33,10 @@ function initVR() {
   var vrButton = document.getElementById("vr-switch");
   var playButton = document.getElementById("vr-play");
   var playSim = false;
-  window.addEventListener("fullscreenchange", function() {
+  document.addEventListener("fullscreenchange", function() {
     console.log("fullscreenchange");
   });
-  window.addEventListener("fullscreenerror", function() {
+  document.addEventListener("fullscreenerror", function() {
     console.log("fullscreenerror");
   });
   vrButton.addEventListener("click", function() {
