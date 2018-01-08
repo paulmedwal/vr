@@ -47,7 +47,7 @@ function initVR() {
       } else if (renderer.domElement.webkitRequestFullscreen) {
         renderer.domElement.webkitRequestFullscreen();
       }
-      vrDisplay.requestPresent([{source: renderer.domElement}]);
+      //vrDisplay.requestPresent([{source: renderer.domElement}]);
       console.log("requesting fullscreen");
     } else {
       window.alert("VR not supported: navigator.getVRDisplays() is empty.");
