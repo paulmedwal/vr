@@ -47,10 +47,10 @@ function initVR() {
     console.log("webkitfullscreenerror");
   });
   fullscreenButton.addEventListener("click", function() {
-    if (renderer.domElement.requestFullscreen) {
-      renderer.domElement.requestFullscreen();
-    } else if (renderer.domElement.webkitRequestFullscreen) {
-      renderer.domElement.webkitRequestFullscreen();
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen();
     }
     console.log("requesting fullscreen");
   });
