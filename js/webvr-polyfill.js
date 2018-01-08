@@ -225,9 +225,9 @@ Util$1.getScreenHeight = function() {
       window.devicePixelRatio;
 };
 Util$1.requestFullscreen = function(element) {
-  if (Util$1.isWebViewAndroid()) {
+  /*if (Util$1.isWebViewAndroid()) {
       return false;
-  }
+  }*/
   if (element.requestFullscreen) {
     element.requestFullscreen();
   } else if (element.webkitRequestFullscreen) {
