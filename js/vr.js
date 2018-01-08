@@ -30,6 +30,7 @@ function ptc(string) {
 
 function initVR() {
   var polyfill = new WebVRPolyfill();
+  var fullscreenButton = document.getElementById("vr-fullscreen");
   var vrButton = document.getElementById("vr-switch");
   var playButton = document.getElementById("vr-play");
   var playSim = false;
@@ -45,17 +46,18 @@ function initVR() {
   document.addEventListener("webkitfullscreenerror", function() {
     console.log("webkitfullscreenerror");
   });
+  fullscreenButton.addEventListener("click", function() {
+    if (renderer.domElement.requestFullscreen) {
+      renderer.domElement.requestFullscreen();
+    } else if (renderer.domElement.webkitRequestFullscreen) {
+      renderer.domElement.webkitRequestFullscreen();
+    }
+    console.log("requesting fullscreen");
+  }
   vrButton.addEventListener("click", function() {
     windowHeight = window.innerHeight;
     if (vrDisplay) {
-      vrDisplay.requestPresent([{source: renderer.domElement}]).then(function() {
-        if (renderer.domElement.requestFullscreen) {
-          renderer.domElement.requestFullscreen();
-        } else if (renderer.domElement.webkitRequestFullscreen) {
-          renderer.domElement.webkitRequestFullscreen();
-        }
-        console.log("requesting fullscreen");
-      });
+      vrDisplay.requestPresent([{source: renderer.domElement}]);
     } else {
       window.alert("VR not supported: navigator.getVRDisplays() is empty.");
     }
