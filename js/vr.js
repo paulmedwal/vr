@@ -37,8 +37,15 @@ function initVR() {
     console.log("fullscreenchange");
     setTimeout(function() {vrDisplay.requestPresent([{source: renderer.domElement}]);}, 2000);
   });
+  document.addEventListener("webkitfullscreenchange", function() {
+    console.log("webkitfullscreenchange");
+    setTimeout(function() {vrDisplay.requestPresent([{source: renderer.domElement}]);}, 2000);
+  });
   document.addEventListener("fullscreenerror", function() {
     console.log("fullscreenerror");
+  });
+  document.addEventListener("webkitfullscreenerror", function() {
+    console.log("webkitfullscreenerror");
   });
   vrButton.addEventListener("click", function() {
     windowHeight = window.innerHeight;
