@@ -59,6 +59,7 @@ function initVR() {
       } else if (document.webkitExitFullscreen) {
         document.webkitExitFullscreen();
       }
+    }
     console.log("requesting fullscreen");
   });
   vrButton.addEventListener("click", function() {
