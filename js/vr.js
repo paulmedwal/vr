@@ -75,6 +75,9 @@ function initVR() {
       playButton.innerHTML = "Play";
     } else {
       playButton.innerHTML = "Pause";
+      if (onstart) {
+        onstart();
+      }
     }
     playSim = !playSim;
   });
