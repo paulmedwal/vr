@@ -24,8 +24,16 @@ if (window.AppInventor) {
   initVR();
 }
 
-function ptc() {
-  console.log("vr webview: test");
+function ptc1() {
+  console.log("ptc1 - vr webview: test");
+}
+
+function ptc2(s) {
+  console.log("ptc2 - vr webview: " + s);
+}
+
+function ptc3(s, n) {
+  console.log("ptc3 - vr webview: " + s + n);
 }
 
 function initVR() {
