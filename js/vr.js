@@ -75,8 +75,10 @@ function initVR() {
       playButton.innerHTML = "Play";
     } else {
       playButton.innerHTML = "Pause";
-      if (onstart) {
+      if (typeof onstart === "function") {
         onstart();
+      } else {
+        console.log("onstart not define");
       }
     }
     playSim = !playSim;
