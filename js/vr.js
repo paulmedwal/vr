@@ -78,7 +78,7 @@ function initVR() {
       if (typeof onstart === "function") {
         onstart();
       } else {
-        console.log("onstart not define");
+        console.log("onstart not defined");
       }
     }
     playSim = !playSim;
