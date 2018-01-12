@@ -36,6 +36,14 @@ function ptc3(s, n) {
   console.log("ptc3 - vr webview: " + s + n);
 }
 
+function ptc4(s, b) {
+  if (b) {
+    console.log("ptc4 - vr webview: true " + s);
+  } else {
+    console.log("ptc4 - vr webview: false " + s);
+  }
+}
+
 function initVR() {
   var polyfill = new WebVRPolyfill();
   var fullscreenButton = document.getElementById("vr-fullscreen");
