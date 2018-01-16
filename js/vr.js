@@ -44,6 +44,22 @@ function ptc4(s, b) {
   }
 }
 
+function return1() {
+  return "return1 str";
+}
+
+function return2(s) {
+  return s;
+}
+
+function return3(n) {
+  return n;
+}
+
+function return4(b) {
+  return true;
+}
+
 function initVR() {
   var polyfill = new WebVRPolyfill();
   var fullscreenButton = document.getElementById("vr-fullscreen");
