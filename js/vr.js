@@ -350,7 +350,7 @@ function initVR() {
     var objectsJSON = sceneJSON[2];
     for (var i = 0; i < objectsJSON.length; i++) {
       var objectJSON = objectsJSON[i];
-      addObject(objectJSON);
+      addObjectJSON(objectJSON);
     }
     var lightsJSON = sceneJSON[3];
     for (var i = 0; i < lightsJSON.length; i++) {
@@ -386,7 +386,7 @@ function initVR() {
     }
   }
   
-  function addObject(objectJSON) {
+  function addObjectJSON(objectJSON) {
     var objectGeometry;
     switch (objectJSON.type) {
       case "BoxBufferGeometry":
@@ -419,7 +419,7 @@ function initVR() {
     processObject(objectGeometry, objectJSON.positionx, objectJSON.positiony, objectJSON.positionz, objectJSON.rotationx, objectJSON.rotationy, objectJSON.rotationz, objectJSON.scalex, objectJSON.scaley, objectJSON.scalez, objectJSON.color, objectJSON.textureURL, objectJSON.mass, objectJSON.linearvelocityx, objectJSON.linearvelocityy, objectJSON.linearvelocityz, objectJSON.angularvelocityx, objectJSON.angularvelocityy, objectJSON.angularvelocityz);
   }
   
-  addObjectJSON = addObject;
+  addObject = addObjectJSON;
 
   function addLight(light) {
     if (!light.isAmbientLight && !light.isHemisphereLight) {
@@ -837,7 +837,7 @@ function initVR() {
   }
 }
 
-var addObjectJSON;
+var addObject;
 
 var addBox;
 var addCone;
