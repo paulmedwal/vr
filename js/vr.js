@@ -385,6 +385,41 @@ function initVR() {
       }
     }
   }
+  
+  function addObject(objectJSON) {
+    var objectGeometry;
+    switch (objectJSON.type) {
+      case "BoxBufferGeometry":
+        objectGeometry = new THREE.BoxGeometry(objectJSON.boxwidth, objectJSON.boxheight, objectJSON.boxdepth);
+        break;
+      case "ConeBufferGeometry":
+        objectGeometry = new THREE.ConeGeometry(objectJSON.coneradius, objectJSON.coneheight, objectJSON.coneradialsegments);
+        break;
+      case "CylinderBufferGeometry":
+        objectGeometry = new THREE.CylinderGeometry(objectJSON.cylinderradiustop, objectJSON.cylinderradiusbottom, objectJSON.cylinderheight, objectJSON.cylinderradialsegments);
+        break;
+      case "DodecahedronBufferGeometry":
+        objectGeometry = new THREE.DodecahedronGeometry(objectJSON.dodecahedronradius);
+        break;
+      case "IcosahedronBufferGeometry":
+        objectGeometry = new THREE.IcosahedronGeometry(objectJSON.icosahedronradius);
+        break;
+      case "OctahedronBufferGeometry":
+        objectGeometry = new THREE.OctahedronGeometry(objectJSON.octahedronradius);
+        break;
+      case "SphereBufferGeometry":
+        objectGeometry = new THREE.SphereGeometry(objectJSON.sphereradius, objectJSON.spherewidthsegments, objectJSON.sphereheightsegments);
+        break;
+      case "TetrahedronBufferGeometry":
+        objectGeometry = new THREE.TetrahedronGeometry(objectJSON.tetrahedronradius);
+        break;
+      default:
+        return;
+    }
+    processObject(objectGeometry, objectJSON.positionx, objectJSON.positiony, objectJSON.positionz, objectJSON.rotationx, objectJSON.rotationy, objectJSON.rotationz, objectJSON.scalex, objectJSON.scaley, objectJSON.scalez, objectJSON.color, objectJSON.textureURL, objectJSON.mass, objectJSON.linearvelocityx, objectJSON.linearvelocityy, objectJSON.linearvelocityz, objectJSON.angularvelocityx, objectJSON.angularvelocityy, objectJSON.angularvelocityz);
+  }
+  
+  addObjectJSON = addObject;
 
   function addLight(light) {
     if (!light.isAmbientLight && !light.isHemisphereLight) {
@@ -802,38 +837,7 @@ function initVR() {
   }
 }
 
-function addObject(objectJSON) {
-  var objectGeometry;
-  switch (objectJSON.type) {
-    case "BoxBufferGeometry":
-      objectGeometry = new THREE.BoxGeometry(objectJSON.boxwidth, objectJSON.boxheight, objectJSON.boxdepth);
-      break;
-    case "ConeBufferGeometry":
-      objectGeometry = new THREE.ConeGeometry(objectJSON.coneradius, objectJSON.coneheight, objectJSON.coneradialsegments);
-      break;
-    case "CylinderBufferGeometry":
-      objectGeometry = new THREE.CylinderGeometry(objectJSON.cylinderradiustop, objectJSON.cylinderradiusbottom, objectJSON.cylinderheight, objectJSON.cylinderradialsegments);
-      break;
-    case "DodecahedronBufferGeometry":
-      objectGeometry = new THREE.DodecahedronGeometry(objectJSON.dodecahedronradius);
-      break;
-    case "IcosahedronBufferGeometry":
-      objectGeometry = new THREE.IcosahedronGeometry(objectJSON.icosahedronradius);
-      break;
-    case "OctahedronBufferGeometry":
-      objectGeometry = new THREE.OctahedronGeometry(objectJSON.octahedronradius);
-      break;
-    case "SphereBufferGeometry":
-      objectGeometry = new THREE.SphereGeometry(objectJSON.sphereradius, objectJSON.spherewidthsegments, objectJSON.sphereheightsegments);
-      break;
-    case "TetrahedronBufferGeometry":
-      objectGeometry = new THREE.TetrahedronGeometry(objectJSON.tetrahedronradius);
-      break;
-    default:
-      return;
-  }
-  processObject(objectGeometry, objectJSON.positionx, objectJSON.positiony, objectJSON.positionz, objectJSON.rotationx, objectJSON.rotationy, objectJSON.rotationz, objectJSON.scalex, objectJSON.scaley, objectJSON.scalez, objectJSON.color, objectJSON.textureURL, objectJSON.mass, objectJSON.linearvelocityx, objectJSON.linearvelocityy, objectJSON.linearvelocityz, objectJSON.angularvelocityx, objectJSON.angularvelocityy, objectJSON.angularvelocityz);
-}
+var addObjectJSON;
 
 var addBox;
 var addCone;
