@@ -57,7 +57,7 @@ function return3(n) {
 }
 
 function return4(b) {
-  return true;
+  return b;
 }
 
 function initVR() {
