@@ -107,10 +107,14 @@ function initVR() {
       playButton.innerHTML = "Play";
     } else {
       playButton.innerHTML = "Pause";
-      if (typeof procedures.onstart === "function") {
-        procedures.onstart();
+      if (typeof procedures !== "undefined) {
+        if (typeof procedures.onstart === "function") {
+          procedures.onstart();
+        } else {
+          console.log("onstart not defined");
+        }
       } else {
-        console.log("onstart not defined");
+        console.log("procedures not defined");
       }
     }
     playSim = !playSim;
