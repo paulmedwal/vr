@@ -13,6 +13,8 @@ console.log("window.innerHeight is " + window.innerHeight);
 var sceneJSONString;
 var renderer;
 
+var procedures = {onstart: null};
+
 if (window.AppInventor) {
   console.log(window.AppInventor.getPrivateWebViewString());
   sceneJSONString = decodeURIComponent(window.AppInventor.getPrivateWebViewString());
@@ -107,8 +109,8 @@ function initVR() {
       playButton.innerHTML = "Play";
     } else {
       playButton.innerHTML = "Pause";
-      if (typeof onstart === "function") {
-        onstart();
+      if (typeof procedures.onstart === "function") {
+        procedures.onstart();
       } else {
         console.log("onstart not defined");
       }
