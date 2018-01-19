@@ -149,6 +149,7 @@ function initVR() {
   var clock = new THREE.Clock();
   var transformAux1 = new Ammo.btTransform();
 
+  var idToObjectProperties = {};
   var idToObject = {};
   var idToPhysicsBody = {};
   var objectID = -1;
@@ -320,7 +321,7 @@ function initVR() {
       body.setActivationState(4);
     }
     physicsWorld.addRigidBody(body);
-    idToPhysicsBody[objectID] = body;
+    idToPhysicsBody[id] = body;
   }
 
   function importScene(sceneJSON) {
@@ -389,8 +390,8 @@ function initVR() {
       }
     }
   }
-  
-  function addObjectJSON(objectJSON) {
+
+  function addObjectJSON(objectJSON, id) {
     var objectGeometry;
     switch (objectJSON.type) {
       case "BoxBufferGeometry":
@@ -420,9 +421,13 @@ function initVR() {
       default:
         return;
     }
-    processObject(objectGeometry, objectJSON.positionx, objectJSON.positiony, objectJSON.positionz, objectJSON.rotationx, objectJSON.rotationy, objectJSON.rotationz, objectJSON.scalex, objectJSON.scaley, objectJSON.scalez, objectJSON.color, objectJSON.textureURL, objectJSON.mass, objectJSON.linearvelocityx, objectJSON.linearvelocityy, objectJSON.linearvelocityz, objectJSON.angularvelocityx, objectJSON.angularvelocityy, objectJSON.angularvelocityz);
+    if (id === undefined) {
+      var id = ++objectID;
+    }
+    idToObjectProperties[id] = objectJSON;
+    processObject(objectGeometry, objectJSON.positionx, objectJSON.positiony, objectJSON.positionz, objectJSON.rotationx, objectJSON.rotationy, objectJSON.rotationz, objectJSON.scalex, objectJSON.scaley, objectJSON.scalez, objectJSON.color, objectJSON.textureURL, objectJSON.mass, objectJSON.linearvelocityx, objectJSON.linearvelocityy, objectJSON.linearvelocityz, objectJSON.angularvelocityx, objectJSON.angularvelocityy, objectJSON.angularvelocityz, id);
   }
-  
+
   addObject = addObjectJSON;
 
   function addLight(light) {
@@ -513,7 +518,7 @@ function initVR() {
     }
   }
 
-  function processObject(objectGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz) {
+  function processObject(objectGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz, id) {
     objectGeometry.vertices.forEach(function(v) {
       v.x = v.x * scalex;
       v.y = v.y * scaley;
@@ -538,50 +543,81 @@ function initVR() {
     object.position.set(positionx, positiony, positionz);
     object.rotation.set(rotationx, rotationy, rotationz);
     objectShape.setMargin(margin);
-    objectID++;
-    createRigidBody(object, objectShape, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz, objectID);
-    idToObject[objectID] = object;
-    return objectID;
+    createRigidBody(object, objectShape, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz, id);
+    idToObject[id] = object;
   }
 
-  addBox = function addBox({positionx = 0, positiony = 0, positionz = 0, rotationx = 0, rotationy = 0, rotationz = 0, scalex = 1, scaley = 1, scalez = 1, color = 0x551410, textureURL = "", mass = 10, width = 4, height = 4, depth = 4, linearvelocityx = 0, linearvelocityy = 0, linearvelocityz = 0, angularvelocityx = 0, angularvelocityy = 0, angularvelocityz = 0} = {}) {
-    var boxGeometry = new THREE.BoxGeometry(width, height, depth);
-    return processObject(boxGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz);
+  createObject = function createObject(properties) {
+    var id = ++objectID;
+    idToObjectProperties[id] = properties;
+    return id;
   }
 
-  addCone = function addCone({positionx = 0, positiony = 0, positionz = 0, rotationx = 0, rotationy = 0, rotationz = 0, scalex = 1, scaley = 1, scalez = 1, color = 0x553200, textureURL = "", mass = 10, radius = 2, height = 4, radialSegments = 16, linearvelocityx = 0, linearvelocityy = 0, linearvelocityz = 0, angularvelocityx = 0, angularvelocityy = 0, angularvelocityz = 0} = {}) {
-    var coneGeometry = new THREE.ConeGeometry(radius, height, radialSegments);
-    return processObject(coneGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz);
-  }
-
-  addCylinder = function addCylinder({positionx = 0, positiony = 0, positionz = 0, rotationx = 0, rotationy = 0, rotationz = 0, scalex = 1, scaley = 1, scalez = 1, color = 0x554400, textureURL = "", mass = 10, radiusTop = 2, radiusBottom = 2, height = 4, radialSegments = 16, linearvelocityx = 0, linearvelocityy = 0, linearvelocityz = 0, angularvelocityx = 0, angularvelocityy = 0, angularvelocityz = 0} = {}) {
-    var cylinderGeometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments);
-    return processObject(cylinderGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz);
-  }
-
-  addDodecahedron = function addDodecahedron({positionx = 0, positiony = 0, positionz = 0, rotationx = 0, rotationy = 0, rotationz = 0, scalex = 1, scaley = 1, scalez = 1, color = 0x194821, textureURL = "", mass = 10, radius = 2, linearvelocityx = 0, linearvelocityy = 0, linearvelocityz = 0, angularvelocityx = 0, angularvelocityy = 0, angularvelocityz = 0} = {}) {
-    var dodecahedronGeometry = new THREE.DodecahedronGeometry(radius);
-    return processObject(dodecahedronGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz);
-  }
-
-  addIcosahedron = function addIcosahedron({positionx = 0, positiony = 0, positionz = 0, rotationx = 0, rotationy = 0, rotationz = 0, scalex = 1, scaley = 1, scalez = 1, color = 0x1e4353, textureURL = "", mass = 10, radius = 2, linearvelocityx = 0, linearvelocityy = 0, linearvelocityz = 0, angularvelocityx = 0, angularvelocityy = 0, angularvelocityz = 0} = {}) {
-    var icosahedronGeometry = new THREE.IcosahedronGeometry(radius);
-    return processObject(icosahedronGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz);
-  }
-
-  addOctahedron = function addOctahedron({positionx = 0, positiony = 0, positionz = 0, rotationx = 0, rotationy = 0, rotationz = 0, scalex = 1, scaley = 1, scalez = 1, color = 0x002955, textureURL = "", mass = 10, radius = 2, linearvelocityx = 0, linearvelocityy = 0, linearvelocityz = 0, angularvelocityx = 0, angularvelocityy = 0, angularvelocityz = 0} = {}) {
-    var octahedronGeometry = new THREE.OctahedronGeometry(radius);
-    return processObject(octahedronGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz);
-  }
-
-  addSphere = function addSphere({positionx = 0, positiony = 0, positionz = 0, rotationx = 0, rotationy = 0, rotationz = 0, scalex = 1, scaley = 1, scalez = 1, color = 0x1d1d47, textureURL = "", mass = 10, radius = 2, widthSegments = 16, heightSegments = 16, linearvelocityx = 0, linearvelocityy = 0, linearvelocityz = 0, angularvelocityx = 0, angularvelocityy = 0, angularvelocityz = 0} = {}) {
-    var sphereGeometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
-    return processObject(sphereGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz);
-  }
-
-  addTetrahedron = function addTetrahedron({positionx = 0, positiony = 0, positionz = 0, rotationx = 0, rotationy = 0, rotationz = 0, scalex = 1, scaley = 1, scalez = 1, color = 0x550f1c, textureURL = "", mass = 10, radius = 2, linearvelocityx = 0, linearvelocityy = 0, linearvelocityz = 0, angularvelocityx = 0, angularvelocityy = 0, angularvelocityz = 0} = {}) {
-    var tetrahedronGeometry = new THREE.TetrahedronGeometry(radius);
-    return processObject(tetrahedronGeometry, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz);
+  setObjectProperty = function setObjectProperty(id, property, value) {
+    if (!idToObjectProperties.hasOwnProperty(id)) {
+      alert("invalid id");
+      return;
+    }
+    var properties = idToObjectProperties[id];
+    if (idToObject.hasOwnProperty(id)) {
+      var object = idToObject[id];
+    }
+    switch (property) {
+      case "positionx":
+        properties.positionx = value;
+        if (idToObject.hasOwnProperty(id)) {
+          object.userData.physicsBody.getWorldTransform().setOrigin(new Ammo.btVector3(value, object.position.y, object.position.z));
+        }
+        break;
+      case "positiony":
+        properties.positiony = value;
+        if (idToObject.hasOwnProperty(id)) {
+          object.userData.physicsBody.getWorldTransform().setOrigin(new Ammo.btVector3(object.position.x, value, object.position.z));
+        }
+        break;
+      case "positionz":
+        properties.positionz = value;
+        if (idToObject.hasOwnProperty(id)) {
+          object.userData.physicsBody.getWorldTransform().setOrigin(new Ammo.btVector3(object.position.x, object.position.y, value));
+        }
+        break;
+      case "rotationx":
+        properties.rotationx = value;
+        if (idToObject.hasOwnProperty(id)) {
+          var newQuaternion = new Ammo.btQuaternion();
+          newQuaternion.setEulerZYX(object.rotation.z, object.rotation.y, value);
+          object.userData.physicsBody.getWorldTransform().setRotation(newQuaternion);
+        }
+        break;
+      case "rotationy":
+        properties.rotationy = value;
+        if (idToObject.hasOwnProperty(id)) {
+          var newQuaternion = new Ammo.btQuaternion();
+          newQuaternion.setEulerZYX(object.rotation.z, value, object.rotation.x);
+          object.userData.physicsBody.getWorldTransform().setRotation(newQuaternion);
+        }
+        break;
+      case "rotationz":
+        properties.rotationz = value;
+        if (idToObject.hasOwnProperty(id)) {
+          var newQuaternion = new Ammo.btQuaternion();
+          newQuaternion.setEulerZYX(value, object.rotation.y, object.rotation.x);
+          object.userData.physicsBody.getWorldTransform().setRotation(newQuaternion);
+        }
+        break;
+      case "color":
+        properties.color = value;
+        if (idToObject.hasOwnProperty(id)) {
+          idToObject[id].material.color = new THREE.Color(value);
+        }
+        break;
+      default:
+        properties[property] = value;
+        if (idToObject.hasOwnProperty(id)) {
+          removeObject(id);
+          addObjectJSON(properties, id);
+        }
+    }
   }
 
   addAmbientLight = function addAmbientLight({color = 0xffffff, intensity = 0.5} = {}) {
@@ -614,13 +650,28 @@ function initVR() {
 
   removeObject = function removeObject(id) {
     if (idToObject.hasOwnProperty(id)) {
-      rigidBodies.splice(rigidBodies.indexOf(idToObject[id]), 1);
-      scene.remove(idToObject[id]);
-      physicsWorld.removeRigidBody(idToPhysicsBody[id]);
+      var properties = idToObjectProperties[id];
+      var object = idToObject[id];
+      var physicsBody = idToPhysicsBody[id];
+      properties.positionx = object.position.x;
+      properties.positiony = object.position.y;
+      properties.positionz = object.position.z;
+      properties.rotationx = object.rotation.x;
+      properties.rotationy = object.rotation.y;
+      properties.rotationz = object.rotation.z;
+      properties.linearvelocityx = physicsBody.getLinearVelocity().x();
+      properties.linearvelocityy = physicsBody.getLinearVelocity().y();
+      properties.linearvelocityz = physicsBody.getLinearVelocity().z();
+      properties.angularvelocityx = physicsBody.getAngularVelocity().x();
+      properties.angularvelocityy = physicsBody.getAngularVelocity().y();
+      properties.angularvelocityy = physicsBody.getAngularVelocity().z();
+      rigidBodies.splice(rigidBodies.indexOf(object), 1);
+      scene.remove(object);
+      physicsWorld.removeRigidBody(physicsBody);
       delete idToObject[id];
       delete idToPhysicsBody[id];
     } else {
-      return "invalid id";
+      alert("invalid id");
     }
   }
 
@@ -781,39 +832,6 @@ function initVR() {
     return hudTexts[i];
   }
 
-  setObjectPosition = function setObjectPosition(id, x, y, z) {
-    if (idToObject.hasOwnProperty(id)) {
-      idToObject[id].position.set(x, y, z);
-      rigidBodies.indexOf(idToObject[id]).position.set(x, y, z);
-    } else {
-      return "invalid id";
-    }
-  }
-
-  setObjectColor = function setObjectColor(id, hex) {
-    if (idToObject.hasOwnProperty(id)) {
-      idToObject[id].material.color = new THREE.Color(hex);
-    } else {
-      return "invalid id";
-    }
-  }
-
-  setObjectLinearVelocity = function setObjectLinearVelocity(id, x, y, z) {
-    if (idToObject.hasOwnProperty(id)) {
-      idToPhysicsBody[id].setLinearVelocity(new Ammo.btVector3(x, y, z));
-    } else {
-      return "invalid id";
-    }
-  }
-
-  setObjectAngularVelocity = function setObjectAngularVelocity(id, x, y, z) {
-    if (idToObject.hasOwnProperty(id)) {
-      idToPhysicsBody[id].setAngularVelocity(new Ammo.btVector3(x, y, z));
-    } else {
-      return "invalid id";
-    }
-  }
-
   setGravity = function setGravity(x, y, z) {
     physicsWorld.setGravity(new Ammo.btVector3(x, y, z));
   }
@@ -841,16 +859,12 @@ function initVR() {
   }
 }
 
+var createObject;
+
 var addObject;
 
-var addBox;
-var addCone;
-var addCylinder;
-var addDodecahedron;
-var addIcosahedron;
-var addOctahedron;
-var addSphere;
-var addTetrahedron;
+var setObjectProperty;
+
 var removeObject;
 
 var addAmbientLight;
@@ -885,12 +899,6 @@ var getCameraY;
 var getCameraZ;
 
 var getHUDText;
-
-var setObjectPosition;
-var setObjectColor;
-
-var setObjectLinearVelocity;
-var setObjectAngularVelocity;
 
 var setGravity;
 var setCamera;
