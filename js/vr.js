@@ -154,6 +154,7 @@ function initVR() {
   var idToPhysicsBody = {};
   var objectID = -1;
 
+  var idToLightProperties = {};
   var idToLight = {};
   var lightID = -1;
 
@@ -355,43 +356,33 @@ function initVR() {
     var objectsJSON = sceneJSON[2];
     for (var i = 0; i < objectsJSON.length; i++) {
       var objectJSON = objectsJSON[i];
-      addObjectJSON(objectJSON);
+      addObjectJSON(createObjectJSON(objectJSON));
     }
     var lightsJSON = sceneJSON[3];
     for (var i = 0; i < lightsJSON.length; i++) {
       var lightJSON = lightsJSON[i];
-      switch (lightJSON.type) {
-        case "AmbientLight":
-          var ambientLight = new THREE.AmbientLight(lightJSON.color, lightJSON.intensity);
-          addLight(ambientLight);
-          break;
-        case "DirectionalLight":
-          var directionalLight = new THREE.DirectionalLight(lightJSON.color, lightJSON.intensity);
-          directionalLight.position.set(lightJSON.positionx, lightJSON.positiony, lightJSON.positionz);
-          addLight(directionalLight);
-          break;
-        case "HemisphereLight":
-          var hemisphereLight = new THREE.HemisphereLight(lightJSON.skycolor, lightJSON.groundcolor, lightJSON.intensity);
-          hemisphereLight.position.set(lightJSON.positionx, lightJSON.positiony, lightJSON.positionz);
-          addLight(hemisphereLight);
-          break;
-        case "PointLight":
-          var pointLight = new THREE.PointLight(lightJSON.color, lightJSON.intensity);
-          pointLight.position.set(lightJSON.positionx, lightJSON.positiony, lightJSON.positionz);
-          addLight(pointLight);
-          break;
-        case "SpotLight":
-          var spotLight = new THREE.SpotLight(lightJSON.color, lightJSON.intensity, lightJSON.distance, lightJSON.angle, lightJSON.penumbra, lightJSON.decay);
-          spotLight.position.set(lightJSON.positionx, lightJSON.positiony, lightJSON.positionz);
-          addLight(spotLight);
-          break;
-        default:
-          return;
-      }
+      addLightJSON(createLightJSON(lightJSON));
     }
   }
 
-  function addObjectJSON(objectJSON, id) {
+  function createObjectJSON(properties) {
+    var id = ++objectID;
+    idToObjectProperties[id] = properties;
+    return id;
+  }
+
+  createObject = createObjectJSON;
+
+  function createLightJSON(properties) {
+    var id = ++lightID;
+    idToLightProperties[id] = properties;
+    return id;
+  }
+
+  createLight = createLightJSON;
+
+  function addObjectJSON(id) {
+    var objectJSON = idToObjectProperties[id];
     var objectGeometry;
     switch (objectJSON.type) {
       case "BoxBufferGeometry":
@@ -421,34 +412,41 @@ function initVR() {
       default:
         return;
     }
-    if (id === undefined) {
-      var id = ++objectID;
-    }
-    idToObjectProperties[id] = objectJSON;
     processObject(objectGeometry, objectJSON.positionx, objectJSON.positiony, objectJSON.positionz, objectJSON.rotationx, objectJSON.rotationy, objectJSON.rotationz, objectJSON.scalex, objectJSON.scaley, objectJSON.scalez, objectJSON.color, objectJSON.textureURL, objectJSON.mass, objectJSON.linearvelocityx, objectJSON.linearvelocityy, objectJSON.linearvelocityz, objectJSON.angularvelocityx, objectJSON.angularvelocityy, objectJSON.angularvelocityz, id);
   }
 
   addObject = addObjectJSON;
 
-  function addLight(light) {
-    if (!light.isAmbientLight && !light.isHemisphereLight) {
-      light.shadow.mapSize.width = 512;
-      light.shadow.mapSize.height = 512;
-      light.shadow.camera.left = -25;
-      light.shadow.camera.right = 25;
-      light.shadow.camera.top = 25;
-      light.shadow.camera.bottom = -25;
-      light.shadow.camera.near = 0.5;
-      light.shadow.camera.far = 100;
-      if (shadows) {
-        light.castShadow = true;
-      }
+  function addLightJSON(id) {
+    var lightJSON = idToLightProperties[id];
+    var light;
+    switch (lightJSON.type) {
+      case "AmbientLight":
+        light = new THREE.AmbientLight(lightJSON.color, lightJSON.intensity);
+        break;
+      case "DirectionalLight":
+        light = new THREE.DirectionalLight(lightJSON.color, lightJSON.intensity);
+        light.position.set(lightJSON.positionx, lightJSON.positiony, lightJSON.positionz);
+        break;
+      case "HemisphereLight":
+        light = new THREE.HemisphereLight(lightJSON.skycolor, lightJSON.groundcolor, lightJSON.intensity);
+        light.position.set(lightJSON.positionx, lightJSON.positiony, lightJSON.positionz);
+        break;
+      case "PointLight":
+        light = new THREE.PointLight(lightJSON.color, lightJSON.intensity);
+        light.position.set(lightJSON.positionx, lightJSON.positiony, lightJSON.positionz);
+        break;
+      case "SpotLight":
+        light = new THREE.SpotLight(lightJSON.color, lightJSON.intensity, lightJSON.distance, lightJSON.angle, lightJSON.penumbra, lightJSON.decay);
+        light.position.set(lightJSON.positionx, lightJSON.positiony, lightJSON.positionz);
+        break;
+      default:
+        return;
     }
-    lightID++;
-    scene.add(light);
-    idToLight[lightID] = light;
-    return lightID;
+    processLight(light, id);
   }
+
+  addLight = addLightJSON;
 
   function createHUD(i, texture, x, y) {
     var hudMaterial = new THREE.SpriteMaterial({map: texture});
@@ -547,10 +545,22 @@ function initVR() {
     idToObject[id] = object;
   }
 
-  createObject = function createObject(properties) {
-    var id = ++objectID;
-    idToObjectProperties[id] = properties;
-    return id;
+  function processLight(light, id) {
+    if (!light.isAmbientLight && !light.isHemisphereLight) {
+      light.shadow.mapSize.width = 512;
+      light.shadow.mapSize.height = 512;
+      light.shadow.camera.left = -25;
+      light.shadow.camera.right = 25;
+      light.shadow.camera.top = 25;
+      light.shadow.camera.bottom = -25;
+      light.shadow.camera.near = 0.5;
+      light.shadow.camera.far = 100;
+      if (shadows) {
+        light.castShadow = true;
+      }
+    }
+    scene.add(light);
+    idToLight[id] = light;
   }
 
   setObjectProperty = function setObjectProperty(id, property, value) {
@@ -559,64 +569,41 @@ function initVR() {
       return;
     }
     var properties = idToObjectProperties[id];
+    properties[property] = value;
     if (idToObject.hasOwnProperty(id)) {
       var object = idToObject[id];
-    }
-    switch (property) {
-      case "positionx":
-        properties.positionx = value;
-        if (idToObject.hasOwnProperty(id)) {
+      switch (property) {
+        case "positionx":
           object.userData.physicsBody.getWorldTransform().setOrigin(new Ammo.btVector3(value, object.position.y, object.position.z));
-        }
-        break;
-      case "positiony":
-        properties.positiony = value;
-        if (idToObject.hasOwnProperty(id)) {
+          break;
+        case "positiony":
           object.userData.physicsBody.getWorldTransform().setOrigin(new Ammo.btVector3(object.position.x, value, object.position.z));
-        }
-        break;
-      case "positionz":
-        properties.positionz = value;
-        if (idToObject.hasOwnProperty(id)) {
+          break;
+        case "positionz":
           object.userData.physicsBody.getWorldTransform().setOrigin(new Ammo.btVector3(object.position.x, object.position.y, value));
-        }
-        break;
-      case "rotationx":
-        properties.rotationx = value;
-        if (idToObject.hasOwnProperty(id)) {
+          break;
+        case "rotationx":
           var newQuaternion = new Ammo.btQuaternion();
           newQuaternion.setEulerZYX(object.rotation.z, object.rotation.y, value);
           object.userData.physicsBody.getWorldTransform().setRotation(newQuaternion);
-        }
-        break;
-      case "rotationy":
-        properties.rotationy = value;
-        if (idToObject.hasOwnProperty(id)) {
+          break;
+        case "rotationy":
           var newQuaternion = new Ammo.btQuaternion();
           newQuaternion.setEulerZYX(object.rotation.z, value, object.rotation.x);
           object.userData.physicsBody.getWorldTransform().setRotation(newQuaternion);
-        }
-        break;
-      case "rotationz":
-        properties.rotationz = value;
-        if (idToObject.hasOwnProperty(id)) {
+          break;
+        case "rotationz":
           var newQuaternion = new Ammo.btQuaternion();
           newQuaternion.setEulerZYX(value, object.rotation.y, object.rotation.x);
           object.userData.physicsBody.getWorldTransform().setRotation(newQuaternion);
-        }
-        break;
-      case "color":
-        properties.color = value;
-        if (idToObject.hasOwnProperty(id)) {
+          break;
+        case "color":
           object.material.color = new THREE.Color(value);
-        }
-        break;
-      default:
-        properties[property] = value;
-        if (idToObject.hasOwnProperty(id)) {
+          break;
+        default:
           removeObject(id);
           addObjectJSON(properties, id);
-        }
+      }
     }
   }
 
@@ -664,37 +651,52 @@ function initVR() {
     }
   }
 
-  addAmbientLight = function addAmbientLight({color = 0xffffff, intensity = 0.5} = {}) {
-    var ambientLight = new THREE.AmbientLight(color, intensity);
-    return addLight(ambientLight);
+  setLightProperty = function setLightProperty(id, property, value) {
+    if (!idToLightProperties.hasOwnProperty(id)) {
+      alert("invalid id");
+      return;
+    }
+    var properties = idToLightProperties[id];
+    properties[property] = value;
+    if (idToLight.hasOwnProperty(id)) {
+      var light = idToLight[id];
+      switch (property) {
+        case "positionx":
+          light.position.x = value;
+          break;
+        case "positiony":
+          light.position.y = value;
+          break;
+        case "positionz":
+          light.position.z = value;
+          break;
+        case "color":
+          light.color = new THREE.Color(value);
+          break;
+        case "skycolor":
+          light.skyColor = new THREE.Color(value);
+          break;
+        case "groundcolor":
+          light.groundColor = new THREE.Color(value);
+          break;
+        default:
+          light[property] = value;
+      }
+    }
   }
 
-  addDirectionalLight = function addDirectionalLight({positionx = 0, positiony = 0, positionz = 0, color = 0x00ffff, intensity = 1} = {}) {
-    var directionalLight = new THREE.DirectionalLight(color, intensity);
-    directionalLight.position.set(positionx, positiony, positionz);
-    return addLight(directionalLight);
-  }
-
-  addHemisphereLight = function addHemisphereLight({skycolor = 0xff0000, groundcolor = 0x0000ff, intensity = 1} = {}) {
-    var hemisphereLight = new THREE.HemisphereLight(skycolor, groundcolor, intensity);
-    return addLight(hemisphereLight);
-  }
-
-  addPointLight = function addPointLight({positionx = 10, positiony = 10, positionz = 0, color = 0xff0000, intensity = 1} = {}) {
-    var pointLight = new THREE.PointLight(color, intensity);
-    pointLight.position.set(positionx, positiony, positionz);
-    return addLight(pointLight);
-  }
-
-  addSpotLight = function addSpotLight({positionx = 0, positiony = 10, positionz = 10, color = 0x00ff00, intensity = 10, distance = 40, angle = 0.5236, penumbra = 0.2, decay = 1} = {}) {
-    var spotLight = new THREE.SpotLight(color, intensity, distance, angle, penumbra, decay);
-    spotLight.position.set(positionx, positiony, positionz);
-    return addLight(spotLight);
+  getLightProperty = function getLightProperty(id, property) {
+    if (!idToLightProperties.hasOwnProperty(id)) {
+      alert("invalid id");
+      return;
+    }
+    return idToLightProperties[id][property];
   }
 
   removeObject = function removeObject(id) {
     if (!idToObject.hasOwnProperty(id)) {
       alert("invalid id");
+      return;
     }
     var properties = idToObjectProperties[id];
     var object = idToObject[id];
@@ -719,12 +721,12 @@ function initVR() {
   }
 
   removeLight = function removeLight(id) {
-    if (idToLight.hasOwnProperty(id)) {
-      scene.remove(idToLight[id]);
-      delete idToLight[id];
-    } else {
-      return "invalid id";
+    if (!idToLight.hasOwnProperty(id)) {
+      alert("invalid id");
+      return;
     }
+    scene.remove(idToLight[id]);
+    delete idToLight[id];
   }
 
   getObjectCount = function getObjectCount() {
@@ -775,19 +777,18 @@ function initVR() {
 }
 
 var createObject;
+var createLight;
 
 var addObject;
+var addLight;
 
 var setObjectProperty;
 var getObjectProperty;
 
-var removeObject;
+var setLightProperty;
+var getLightProperty;
 
-var addAmbientLight;
-var addDirectionalLight;
-var addHemisphereLight;
-var addPointLight;
-var addSpotLight;
+var removeObject;
 var removeLight;
 
 var getObjectCount;
