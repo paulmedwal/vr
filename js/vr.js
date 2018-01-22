@@ -608,7 +608,7 @@ function initVR() {
       case "color":
         properties.color = value;
         if (idToObject.hasOwnProperty(id)) {
-          idToObject[id].material.color = new THREE.Color(value);
+          object.material.color = new THREE.Color(value);
         }
         break;
       default:
@@ -617,6 +617,50 @@ function initVR() {
           removeObject(id);
           addObjectJSON(properties, id);
         }
+    }
+  }
+
+  getObjectProperty = function getObjectProperty(id, property) {
+    if (!idToObjectProperties.hasOwnProperty(id)) {
+      alert("invalid id");
+      return;
+    }
+    var properties = idToObjectProperties[id];
+    if (idToObject.hasOwnProperty(id)) {
+      var object = idToObject[id];
+      var physicsBody = idToPhysicsBody[id];
+    } else {
+      return properties[property];
+    }
+    switch (property) {
+      case "positionx":
+        return object.position.x;
+      case "positiony":
+        return object.position.y;
+      case "positionz":
+        return object.position.z;
+      case "rotationx":
+        return object.rotation.x;
+      case "rotationy":
+        return object.rotation.y;
+      case "rotationz":
+        return object.rotation.z;
+      case "color":
+        return object.material.color.getHex();
+      case "linearvelocityx":
+        return physicsBody.getLinearVelocity().x();
+      case "linearvelocityy":
+        return physicsBody.getLinearVelocity().y();
+      case "linearvelocityz":
+        return physicsBody.getLinearVelocity().z();
+      case "angularvelocityx":
+        return physicsBody.getAngularVelocity().x();
+      case "angularvelocityy":
+        return physicsBody.getAngularVelocity().y();
+      case "angularvelocityz":
+        return physicsBody.getAngularVelocity().z();
+      default:
+        return properties[property];
     }
   }
 
@@ -649,30 +693,29 @@ function initVR() {
   }
 
   removeObject = function removeObject(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      var properties = idToObjectProperties[id];
-      var object = idToObject[id];
-      var physicsBody = idToPhysicsBody[id];
-      properties.positionx = object.position.x;
-      properties.positiony = object.position.y;
-      properties.positionz = object.position.z;
-      properties.rotationx = object.rotation.x;
-      properties.rotationy = object.rotation.y;
-      properties.rotationz = object.rotation.z;
-      properties.linearvelocityx = physicsBody.getLinearVelocity().x();
-      properties.linearvelocityy = physicsBody.getLinearVelocity().y();
-      properties.linearvelocityz = physicsBody.getLinearVelocity().z();
-      properties.angularvelocityx = physicsBody.getAngularVelocity().x();
-      properties.angularvelocityy = physicsBody.getAngularVelocity().y();
-      properties.angularvelocityy = physicsBody.getAngularVelocity().z();
-      rigidBodies.splice(rigidBodies.indexOf(object), 1);
-      scene.remove(object);
-      physicsWorld.removeRigidBody(physicsBody);
-      delete idToObject[id];
-      delete idToPhysicsBody[id];
-    } else {
+    if (!idToObject.hasOwnProperty(id)) {
       alert("invalid id");
     }
+    var properties = idToObjectProperties[id];
+    var object = idToObject[id];
+    var physicsBody = idToPhysicsBody[id];
+    properties.positionx = object.position.x;
+    properties.positiony = object.position.y;
+    properties.positionz = object.position.z;
+    properties.rotationx = object.rotation.x;
+    properties.rotationy = object.rotation.y;
+    properties.rotationz = object.rotation.z;
+    properties.linearvelocityx = physicsBody.getLinearVelocity().x();
+    properties.linearvelocityy = physicsBody.getLinearVelocity().y();
+    properties.linearvelocityz = physicsBody.getLinearVelocity().z();
+    properties.angularvelocityx = physicsBody.getAngularVelocity().x();
+    properties.angularvelocityy = physicsBody.getAngularVelocity().y();
+    properties.angularvelocityy = physicsBody.getAngularVelocity().z();
+    rigidBodies.splice(rigidBodies.indexOf(object), 1);
+    scene.remove(object);
+    physicsWorld.removeRigidBody(physicsBody);
+    delete idToObject[id];
+    delete idToPhysicsBody[id];
   }
 
   removeLight = function removeLight(id) {
@@ -686,134 +729,6 @@ function initVR() {
 
   getObjectCount = function getObjectCount() {
     return rigidBodies.length;
-  }
-
-  getObjectPositionX = function getObjectPositionX(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].position.x;
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectPositionY = function getObjectPositionY(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].position.y;
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectPositionZ = function getObjectPositionZ(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].position.z;
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectRotationX = function getObjectRotationX(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].rotation.x;
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectRotationY = function getObjectRotationY(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].rotation.y;
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectRotationZ = function getObjectRotationZ(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].rotation.z;
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectScaleX = function getObjectScaleX(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].scale.x;
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectScaleY = function getObjectScaleY(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].scale.y;
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectScaleZ = function getObjectScaleZ(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].scale.z;
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectColor = function getObjectColor(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToObject[id].material.color.getHex();
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectLinearVelocityX = function getObjectLinearVelocityX(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToPhysicsBody[id].getLinearVelocity().x();
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectLinearVelocityY = function getObjectLinearVelocityY(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToPhysicsBody[id].getLinearVelocity().y();
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectLinearVelocityZ = function getObjectLinearVelocityZ(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToPhysicsBody[id].getLinearVelocity().z();
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectAngularVelocityX = function getObjectAngularVelocityX(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToPhysicsBody[id].getAngularVelocity().x();
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectAngularVelocityY = function getObjectAngularVelocityY(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToPhysicsBody[id].getAngularVelocity().y();
-    } else {
-      return "invalid id";
-    }
-  }
-
-  getObjectAngularVelocityZ = function getObjectAngularVelocityZ(id) {
-    if (idToObject.hasOwnProperty(id)) {
-      return idToPhysicsBody[id].getAngularVelocity().z();
-    } else {
-      return "invalid id";
-    }
   }
 
   getCameraX = function getCameraX() {
@@ -864,6 +779,7 @@ var createObject;
 var addObject;
 
 var setObjectProperty;
+var getObjectProperty;
 
 var removeObject;
 
@@ -875,24 +791,6 @@ var addSpotLight;
 var removeLight;
 
 var getObjectCount;
-
-var getObjectPositionX;
-var getObjectPositionY;
-var getObjectPositionZ;
-var getObjectRotationX;
-var getObjectRotationY;
-var getObjectRotationZ;
-var getObjectScaleX;
-var getObjectScaleY;
-var getObjectScaleZ;
-var getObjectColor;
-
-var getObjectLinearVelocityX;
-var getObjectLinearVelocityY;
-var getObjectLinearVelocityZ;
-var getObjectAngularVelocityX;
-var getObjectAngularVelocityY;
-var getObjectAngularVelocityZ;
 
 var getCameraX;
 var getCameraY;
