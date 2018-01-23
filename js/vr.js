@@ -11,7 +11,6 @@ console.log(navigator.userAgent);
 console.log("window.innerWidth is " + window.innerWidth);
 console.log("window.innerHeight is " + window.innerHeight);
 var sceneJSONString;
-var renderer;
 
 if (window.AppInventor) {
   console.log(window.AppInventor.getPrivateWebViewString());
@@ -120,7 +119,7 @@ function initVR() {
     playSim = !playSim;
   });
 
-  renderer = new THREE.WebGLRenderer();
+  var renderer = new THREE.WebGLRenderer();
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   var windowHeight;
@@ -129,8 +128,8 @@ function initVR() {
 
   var shadows;
 
-  var scene, controls, vrEffect, vrDisplay;;
-  var dummy, camera;
+  var scene, controls, vrEffect, vrDisplay;
+  var camera;
 
   var cameraCube, sceneCube, equirectMaterial;
 
@@ -233,12 +232,12 @@ function initVR() {
     });
 
     navigator.getVRDisplays().then(function(vrDisplays) {
-        if (vrDisplays.length) {
+        if (false && vrDisplays.length) {
           vrDisplay = vrDisplays[0];
           controls = new THREE.VRControls(camera);
           vrDisplay.requestAnimationFrame(render);
         } else {
-          controls = new THREE.OrbitControls(dummy, renderer.domElement);
+          controls = new THREE.OrbitControls(camera, renderer.domElement);
           requestAnimationFrame(render);
         }
       });
@@ -328,13 +327,10 @@ function initVR() {
   function importScene(sceneJSON) {
     var worldJSON = sceneJSON[0];
     physicsWorld.setGravity(new Ammo.btVector3(worldJSON.gravityx, worldJSON.gravityy, worldJSON.gravityz));
-    dummy = new THREE.Camera();
-    dummy.position.set(worldJSON.camerax, worldJSON.cameray, worldJSON.cameraz);
-    dummy.lookAt(new THREE.Vector3(0, 0, 0));
-    scene.add(dummy);
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 10000);
-    camera.position.set(0, 0, 0);
-    dummy.add(camera);
+    camera.position.set(worldJSON.camerax, worldJSON.cameray, worldJSON.cameraz);
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    scene.add(camera);
     if (worldJSON.background !== "") {
       var equirectTexture = new THREE.TextureLoader().load(worldJSON.background);
       equirectTexture.mapping = THREE.EquirectangularReflectionMapping;
@@ -729,20 +725,58 @@ function initVR() {
     delete idToLight[id];
   }
 
+  setCameraProperty = function setCameraProperty(property, value) {
+    switch (property) {
+      case "positionx":
+        camera.position.x = value;
+        break;
+      case "positiony":
+        camera.position.y = value;
+        break;
+      case "positionz":
+        camera.position.z = value;
+        break;
+      case "targetx":
+        controls.target.x = value;
+        break;
+      case "targety":
+        controls.target.y = value;
+        break;
+      case "targetz":
+        controls.target.z = value;
+        break;
+      case "fov":
+        camera.fov = value;
+        camera.updateProjectionMatrix();
+        break;
+      default:
+        controls.enabled = value;
+    }
+  }
+
+  getCameraProperty = function getCameraProperty(property) {
+    switch (property) {
+      case "positionx":
+        return camera.position.x;
+      case "positiony":
+        return camera.position.y;
+      case "positionz":
+        return camera.position.z;
+      case "targetx":
+        return controls.target.x;
+      case "targety":
+        return controls.target.y;
+      case "targetz":
+        return controls.target.z;
+      case "fov":
+        return camera.fov;
+      default:
+        return controls.enabled;
+    }
+  }
+
   getObjectCount = function getObjectCount() {
     return rigidBodies.length;
-  }
-
-  getCameraX = function getCameraX() {
-    return dummy.position.x;
-  }
-
-  getCameraY = function getCameraY() {
-    return dummy.position.y;
-  }
-
-  getCameraZ = function getCameraZ() {
-    return dummy.position.z;
   }
 
   getHUDText = function getHUDText(i) {
@@ -751,10 +785,6 @@ function initVR() {
 
   setGravity = function setGravity(x, y, z) {
     physicsWorld.setGravity(new Ammo.btVector3(x, y, z));
-  }
-
-  setCamera = function setCamera(x, y, z) {
-    dummy.position.set(x, y, z);
   }
 
   setBackground = function setBackground(background) {
@@ -791,16 +821,14 @@ var getLightProperty;
 var removeObject;
 var removeLight;
 
-var getObjectCount;
+var setCameraProperty;
+var getCameraProperty;
 
-var getCameraX;
-var getCameraY;
-var getCameraZ;
+var getObjectCount;
 
 var getHUDText;
 
 var setGravity;
-var setCamera;
 var setBackground;
 
 var setHUDText;
