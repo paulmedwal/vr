@@ -109,11 +109,7 @@ function initVR() {
       if (typeof procedures !== "undefined") {
         if (typeof procedures.onstart === "function") {
           procedures.onstart();
-        } else {
-          console.log("onstart not defined");
         }
-      } else {
-        console.log("procedures not defined");
       }
     }
     playSim = !playSim;
@@ -158,6 +154,10 @@ function initVR() {
   var lightID = -1;
 
   var inVR = false;
+
+  var touchX;
+  var touchY;
+  var touch3D;
 
   init();
 
@@ -245,6 +245,25 @@ function initVR() {
     window.addEventListener("resize", onWindowResize);
     window.addEventListener("vrdisplaypresentchange", onWindowResize);
     window.addEventListener("vrdisplaypresentchange", resizeHUDs);
+    window.addEventListener("touchstart", onTouchStart);
+    window.addEventListener("touchend", onTouchEnd);
+  }
+
+  function onTouchStart(event) {
+    touchX = event.clientX;
+    touchY = event.clientY;
+    touch3D = (new THREE.Vector3()).set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5).unproject(camera);
+    if (typeof procedures !== "undefined") {
+      if (typeof procedures.ontouchstart === "function") {
+        procedures.ontouchstart();
+      }
+    }
+  }
+
+  function onTouchEnd() {
+    touchX = null;
+    touchY = null;
+    touch3D = null;
   }
 
   function resizeHUDs() {
@@ -774,6 +793,21 @@ function initVR() {
         return camera.fov;
       default:
         return controls.enabled;
+    }
+  }
+
+  getTouch = function getTouch(property) {
+    switch (property) {
+      case "touchx":
+        return touchX;
+      case "touchy":
+        return touchY;
+      case "touch3dx":
+        return touch3D.x;
+      case "touch3dy":
+        return touch3D.y;
+      default:
+        return touch3D.z;
     }
   }
 
