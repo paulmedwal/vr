@@ -875,6 +875,8 @@ var removeLight;
 var setCameraProperty;
 var getCameraProperty;
 
+var getTouch;
+
 var getObjectCount;
 
 var getHUDText;
