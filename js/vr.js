@@ -486,9 +486,6 @@ function initVR() {
     if (playSim) {
       var deltaTime = clock.getDelta();
       updatePhysics(deltaTime);
-      if (typeof frameUpdate === "function") {
-        frameUpdate();
-      }
     }
     controls.update();
     Reticulum.update();
@@ -839,5 +836,3 @@ var setBackground;
 var setHUDText;
 
 var canvas;
-
-var frameUpdate;
