@@ -473,6 +473,11 @@ function initVR() {
   }
 
   function render() {
+    if (typeof procedures !== "undefined") {
+      if (typeof procedures.onrender === "function") {
+        procedures.onrender();
+      }
+    }
     if (vrDisplay) {
       vrDisplay.requestAnimationFrame(render);
     } else {
