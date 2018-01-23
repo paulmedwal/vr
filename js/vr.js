@@ -404,6 +404,10 @@ function initVR() {
   createLight = createLightJSON;
 
   function addObjectJSON(id) {
+    if (idToObject.hasOwnProperty(id)) {
+      alert("object already in scene");
+      return;
+    }
     var objectJSON = idToObjectProperties[id];
     var objectGeometry;
     switch (objectJSON.type) {
@@ -440,6 +444,10 @@ function initVR() {
   addObject = addObjectJSON;
 
   function addLightJSON(id) {
+    if (idToLight.hasOwnProperty(id)) {
+      alert("light already in scene");
+      return;
+    }
     var lightJSON = idToLightProperties[id];
     var light;
     switch (lightJSON.type) {
@@ -719,7 +727,7 @@ function initVR() {
 
   removeObject = function removeObject(id) {
     if (!idToObject.hasOwnProperty(id)) {
-      alert("invalid id");
+      alert("object not in scene");
       return;
     }
     var properties = idToObjectProperties[id];
@@ -746,7 +754,7 @@ function initVR() {
 
   removeLight = function removeLight(id) {
     if (!idToLight.hasOwnProperty(id)) {
-      alert("invalid id");
+      alert("light not in scene");
       return;
     }
     scene.remove(idToLight[id]);
