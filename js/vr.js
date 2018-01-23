@@ -246,6 +246,7 @@ function initVR() {
     window.addEventListener("vrdisplaypresentchange", onWindowResize);
     window.addEventListener("vrdisplaypresentchange", resizeHUDs);
     window.addEventListener("touchstart", onTouchStart);
+    window.addEventListener("touchmove", onTouchMove);
     window.addEventListener("touchend", onTouchEnd);
   }
 
@@ -258,6 +259,12 @@ function initVR() {
         procedures.ontouchstart();
       }
     }
+  }
+
+  function onTouchMove(event) {
+    touchX = event.clientX;
+    touchY = event.clientY;
+    touch3D = (new THREE.Vector3()).set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5).unproject(camera);
   }
 
   function onTouchEnd() {
