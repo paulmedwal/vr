@@ -473,11 +473,6 @@ function initVR() {
   }
 
   function render() {
-    if (typeof procedures !== "undefined") {
-      if (typeof procedures.onrender === "function") {
-        procedures.onrender();
-      }
-    }
     if (vrDisplay) {
       vrDisplay.requestAnimationFrame(render);
     } else {
@@ -486,6 +481,11 @@ function initVR() {
     if (playSim) {
       var deltaTime = clock.getDelta();
       updatePhysics(deltaTime);
+      if (typeof procedures !== "undefined") {
+        if (typeof procedures.onrender === "function") {
+          procedures.onrender();
+        }
+      }
     }
     controls.update();
     Reticulum.update();
