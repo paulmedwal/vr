@@ -864,8 +864,16 @@ function initVR() {
     }
   }
 
-  getObjectCount = function getObjectCount() {
-    return rigidBodies.length;
+  getObjects = function getObjects() {
+    return Object.keys(idToObject);
+  }
+
+  getLights = function getLights() {
+    return Object.keys(idToLight);
+  }
+
+  setBackgroundColor = function setBackgroundColor(color) {
+    renderer.setClearColor(color);
   }
 
   getHUDText = function getHUDText(i) {
@@ -913,7 +921,10 @@ var removeLight;
 var setCameraProperty;
 var getCameraProperty;
 
-var getObjectCount;
+var getObjects;
+var getLights;
+
+var setBackgroundColor;
 
 var getHUDText;
 
