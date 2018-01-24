@@ -319,7 +319,7 @@ function initVR() {
             object = intersects[0].object.userData.id;
           }
           var touch = (new THREE.Vector3()).set(mouse.x, mouse.y, 0.5).unproject(camera);
-          procedures.ontouchstart(touches[i].clientX, touches[i].clientY, touch, targetx, targety, targetz, object, touches[i].identifier);
+          procedures.ontouchend(touches[i].clientX, touches[i].clientY, touch, targetx, targety, targetz, object, touches[i].identifier);
         }
       }
     }
