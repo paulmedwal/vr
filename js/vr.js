@@ -268,7 +268,6 @@ function initVR() {
             targetz = intersects[0].point.z;
             object = intersects[0].object.userData.id;
           }
-          console.log("object is " + object);
           var touch = (new THREE.Vector3()).set(mouse.x, mouse.y, 0.5).unproject(camera);
           procedures.ontouchstart(touches[i].clientX, touches[i].clientY, touch, targetx, targety, targetz, object, touches[i].identifier);
         }
