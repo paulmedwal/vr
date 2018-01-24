@@ -346,7 +346,7 @@ function initVR() {
   function importScene(sceneJSON) {
     var worldJSON = sceneJSON[0];
     physicsWorld.setGravity(new Ammo.btVector3(worldJSON.gravityx, worldJSON.gravityy, worldJSON.gravityz));
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 10000);
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
     camera.position.set(worldJSON.camerax, worldJSON.cameray, worldJSON.cameraz);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
     scene.add(camera);
