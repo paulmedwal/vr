@@ -155,6 +155,8 @@ function initVR() {
 
   var inVR = false;
 
+  var raycaster;
+
   init();
 
   function init() {
@@ -196,6 +198,8 @@ function initVR() {
     sceneCube.add(backgroundMesh);
 
     importScene(JSON.parse(sceneJSONString));
+
+    raycaster = new THREE.Raycaster();
 
     Reticulum.init(camera, {
         proximity: false,
@@ -251,19 +255,74 @@ function initVR() {
       if (typeof procedures.ontouchstart === "function") {
         var touches = event.changedTouches;
         for (var i = 0; i < touches.length; i++) {
-          var touch3D = (new THREE.Vector3()).set((touches[i].clientX / window.innerWidth) * 2 - 1, -(touches[i].clientY / window.innerHeight) * 2 + 1, 0.5).unproject(camera);
-          procedures.ontouchstart(touches[i].clientX, touches[i].clientY, touch3D, touches[i].identifier);
+          var mouse = new THREE.Vector2((touches[i].clientX / window.innerWidth) * 2 - 1, -(touches[i].clientY / window.innerHeight) * 2 + 1);
+          raycaster.setFromCamera(mouse, camera);
+          var intersects = raycaster.intersectObjects(Object.values(idToObject));
+          var targetx = null;
+          var targety = null;
+          var targetz = null;
+          var object = null;
+          if (intersects.length > 0) {
+            targetx = intersects[0].point.x;
+            targety = intersects[0].point.y;
+            targetz = intersects[0].point.z;
+            object = intersects[0].object.userData.id;
+          }
+          var touch = (new THREE.Vector3()).set(mouse.x, mouse.y, 0.5).unproject(camera);
+          procedures.ontouchstart(touches[i].clientX, touches[i].clientY, touch, targetx, targety, targetz, object, touches[i].identifier);
         }
       }
     }
   }
 
   function onTouchMove(event) {
-    console.log("onTouchMove");
+    if (typeof procedures !== "undefined") {
+      if (typeof procedures.ontouchstart === "function") {
+        var touches = event.changedTouches;
+        for (var i = 0; i < touches.length; i++) {
+          var mouse = new THREE.Vector2((touches[i].clientX / window.innerWidth) * 2 - 1, -(touches[i].clientY / window.innerHeight) * 2 + 1);
+          raycaster.setFromCamera(mouse, camera);
+          var intersects = raycaster.intersectObjects(Object.values(idToObject));
+          var targetx = null;
+          var targety = null;
+          var targetz = null;
+          var object = null;
+          if (intersects.length > 0) {
+            targetx = intersects[0].point.x;
+            targety = intersects[0].point.y;
+            targetz = intersects[0].point.z;
+            object = intersects[0].object.userData.id;
+          }
+          var touch = (new THREE.Vector3()).set(mouse.x, mouse.y, 0.5).unproject(camera);
+          procedures.ontouchmove(touches[i].clientX, touches[i].clientY, touch, targetx, targety, targetz, object, touches[i].identifier);
+        }
+      }
+    }
   }
 
   function onTouchEnd() {
-    console.log("onTouchEnd");
+    if (typeof procedures !== "undefined") {
+      if (typeof procedures.ontouchstart === "function") {
+        var touches = event.changedTouches;
+        for (var i = 0; i < touches.length; i++) {
+          var mouse = new THREE.Vector2((touches[i].clientX / window.innerWidth) * 2 - 1, -(touches[i].clientY / window.innerHeight) * 2 + 1);
+          raycaster.setFromCamera(mouse, camera);
+          var intersects = raycaster.intersectObjects(Object.values(idToObject));
+          var targetx = null;
+          var targety = null;
+          var targetz = null;
+          var object = null;
+          if (intersects.length > 0) {
+            targetx = intersects[0].point.x;
+            targety = intersects[0].point.y;
+            targetz = intersects[0].point.z;
+            object = intersects[0].object.userData.id;
+          }
+          var touch = (new THREE.Vector3()).set(mouse.x, mouse.y, 0.5).unproject(camera);
+          procedures.ontouchstart(touches[i].clientX, touches[i].clientY, touch, targetx, targety, targetz, object, touches[i].identifier);
+        }
+      }
+    }
   }
 
   function resizeHUDs() {
@@ -568,6 +627,7 @@ function initVR() {
     objectShape.setMargin(margin);
     createRigidBody(object, objectShape, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz, id);
     idToObject[id] = object;
+    object.userData.id = id;
   }
 
   function processLight(light, id) {
