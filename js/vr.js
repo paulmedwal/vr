@@ -457,7 +457,7 @@ function initVR() {
 
   function addObjectJSON(id) {
     if (idToObject.hasOwnProperty(id)) {
-      alert("object already in scene");
+      alert("object " + id + " already in scene");
       return;
     }
     var objectJSON = idToObjectProperties[id];
@@ -497,7 +497,7 @@ function initVR() {
 
   function addLightJSON(id) {
     if (idToLight.hasOwnProperty(id)) {
-      alert("light already in scene");
+      alert("light " + id + " already in scene");
       return;
     }
     var lightJSON = idToLightProperties[id];
@@ -650,7 +650,7 @@ function initVR() {
 
   setObjectProperty = function setObjectProperty(id, property, value) {
     if (!idToObjectProperties.hasOwnProperty(id)) {
-      alert("invalid id");
+      alert("invalid id: " + id);
       return;
     }
     var properties = idToObjectProperties[id];
@@ -694,7 +694,7 @@ function initVR() {
 
   getObjectProperty = function getObjectProperty(id, property) {
     if (!idToObjectProperties.hasOwnProperty(id)) {
-      alert("invalid id");
+      alert("invalid id: " + id);
       return;
     }
     var properties = idToObjectProperties[id];
@@ -738,7 +738,7 @@ function initVR() {
 
   setLightProperty = function setLightProperty(id, property, value) {
     if (!idToLightProperties.hasOwnProperty(id)) {
-      alert("invalid id");
+      alert("invalid id: " + id);
       return;
     }
     var properties = idToLightProperties[id];
@@ -772,7 +772,7 @@ function initVR() {
 
   getLightProperty = function getLightProperty(id, property) {
     if (!idToLightProperties.hasOwnProperty(id)) {
-      alert("invalid id");
+      alert("invalid id: " + id);
       return;
     }
     return idToLightProperties[id][property];
@@ -780,7 +780,7 @@ function initVR() {
 
   removeObject = function removeObject(id) {
     if (!idToObject.hasOwnProperty(id)) {
-      alert("object not in scene");
+      alert("object " + id + " not in scene");
       return;
     }
     var properties = idToObjectProperties[id];
@@ -807,7 +807,7 @@ function initVR() {
 
   removeLight = function removeLight(id) {
     if (!idToLight.hasOwnProperty(id)) {
-      alert("light not in scene");
+      alert("light " + id + " not in scene");
       return;
     }
     scene.remove(idToLight[id]);
