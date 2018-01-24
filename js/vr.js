@@ -246,6 +246,7 @@ function initVR() {
     window.addEventListener("vrdisplaypresentchange", onWindowResize);
     window.addEventListener("vrdisplaypresentchange", resizeHUDs);
     window.addEventListener("touchstart", onTouchStart);
+    window.addEventListener("mousedown", onTouchStart);
     window.addEventListener("touchmove", onTouchMove);
     window.addEventListener("touchend", onTouchEnd);
   }
@@ -254,6 +255,11 @@ function initVR() {
     touchX = event.clientX;
     touchY = event.clientY;
     touch3D = (new THREE.Vector3()).set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5).unproject(camera);
+    console.log("onTouchStartX: " + touchX);
+    console.log("onTouchStartY: " + touchY);
+    console.log("onTouchStart3DX: " + touch3D.x);
+    console.log("onTouchStart3DY: " + touch3D.y);
+    console.log("onTouchStart3DZ: " + touch3D.z);
     if (typeof procedures !== "undefined") {
       if (typeof procedures.ontouchstart === "function") {
         procedures.ontouchstart();
@@ -262,12 +268,14 @@ function initVR() {
   }
 
   function onTouchMove(event) {
+    console.log("onTouchMove");
     touchX = event.clientX;
     touchY = event.clientY;
     touch3D = (new THREE.Vector3()).set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5).unproject(camera);
   }
 
   function onTouchEnd() {
+    console.log("onTouchEnd");
     touchX = null;
     touchY = null;
     touch3D = null;
@@ -814,14 +822,19 @@ function initVR() {
   getTouch = function getTouch(property) {
     switch (property) {
       case "touchx":
+        console.log("getTouchX: " + touchX);
         return touchX;
       case "touchy":
+        console.log("getTouchY: " + touchY);
         return touchY;
       case "touch3dx":
+        console.log("getTouch3DX: " + touch3D.x);
         return touch3D.x;
       case "touch3dy":
+        console.log("getTouch3DY: " + touch3D.y);
         return touch3D.y;
       default:
+        console.log("getTouch3DZ: " + touch3D.z);
         return touch3D.z;
     }
   }
