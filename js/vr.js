@@ -167,7 +167,6 @@ function initVR() {
     //renderer.shadowMap.enabled = true;
     //renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     document.body.appendChild(renderer.domElement);
-    canvas = renderer.domElement;
 
     cameraCube = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10000);
 
@@ -717,8 +716,6 @@ function initVR() {
         return object.rotation.y;
       case "rotationz":
         return object.rotation.z;
-      case "color":
-        return object.material.color.getHex();
       case "linearvelocityx":
         return physicsBody.getLinearVelocity().x();
       case "linearvelocityy":
@@ -872,16 +869,33 @@ function initVR() {
     return Object.keys(idToLight);
   }
 
-  setBackgroundColor = function setBackgroundColor(color) {
-    renderer.setClearColor(color);
+  setWorldProperty = function setWorldProperty(property, value) {
+    switch (property) {
+      case "backgroundcolor":
+        renderer.setClearColor(color);
+        break;
+      case "gravityx":
+        physicsWorld.setGravity(new Ammo.btVector3(value, physicsWorld.getGravity().y(), physicsWorld.getGravity().z()));
+        break;
+      case "gravityy":
+        physicsWorld.setGravity(new Ammo.btVector3(physicsWorld.getGravity().x(), value, physicsWorld.getGravity().z()));
+        break;
+      default:
+        physicsWorld.setGravity(new Ammo.btVector3(physicsWorld.getGravity().x(), physicsWorld.getGravity().y(), value));
+    }
   }
 
-  getHUDText = function getHUDText(i) {
-    return hudTexts[i];
-  }
-
-  setGravity = function setGravity(x, y, z) {
-    physicsWorld.setGravity(new Ammo.btVector3(x, y, z));
+  getWorldProperty = function getWorldProperty(property) {
+    switch (property) {
+      case "backgroundcolor":
+        return renderer.getClearColor().getHex();
+      case "gravityx":
+        return physicsWorld.getGravity().x();
+      case "gravityy":
+        return physicsWorld.getGravity().y();
+      default:
+        return physicsWorld.getGravity().z();
+    }
   }
 
   setBackground = function setBackground(background) {
@@ -900,6 +914,10 @@ function initVR() {
     var hudTexture = new THREE.Texture(getHUD(i, text));
     hudTexture.needsUpdate = true;
     createHUD(i, hudTexture, 2 * hudPositions[i][0] - 300, 350 - 2 * hudPositions[i][1]);
+  }
+
+  getHUDText = function getHUDText(i) {
+    return hudTexts[i];
   }
 }
 
@@ -924,13 +942,10 @@ var getCameraProperty;
 var getObjects;
 var getLights;
 
-var setBackgroundColor;
+var setWorldProperty;
+var getWorldProperty;
 
-var getHUDText;
-
-var setGravity;
 var setBackground;
 
 var setHUDText;
-
-var canvas;
+var getHUDText;
