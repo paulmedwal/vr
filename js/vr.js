@@ -502,7 +502,7 @@ function initVR() {
       default:
         return;
     }
-    processObject(objectGeometry, objectJSON.name, objectJSON.positionx, objectJSON.positiony, objectJSON.positionz, objectJSON.rotationx, objectJSON.rotationy, objectJSON.rotationz, objectJSON.scalex, objectJSON.scaley, objectJSON.scalez, objectJSON.color, objectJSON.textureURL, objectJSON.mass, objectJSON.linearvelocityx, objectJSON.linearvelocityy, objectJSON.linearvelocityz, objectJSON.angularvelocityx, objectJSON.angularvelocityy, objectJSON.angularvelocityz, objectJSON.friction, objectJSON.restitution, objectJSON.collision, id);
+    processObject(objectGeometry, objectJSON.name, objectJSON.positionx, objectJSON.positiony, objectJSON.positionz, objectJSON.rotationx, objectJSON.rotationy, objectJSON.rotationz, objectJSON.scalex, objectJSON.scaley, objectJSON.scalez, objectJSON.color, objectJSON.opacity, objectJSON.textureURL, objectJSON.mass, objectJSON.linearvelocityx, objectJSON.linearvelocityy, objectJSON.linearvelocityz, objectJSON.angularvelocityx, objectJSON.angularvelocityy, objectJSON.angularvelocityz, objectJSON.friction, objectJSON.restitution, objectJSON.collision, id);
   }
 
   addObject = addObjectJSON;
@@ -612,7 +612,7 @@ function initVR() {
     }
   }
 
-  function processObject(objectGeometry, name, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz, friction, restitution, collision, id) {
+  function processObject(objectGeometry, name, positionx, positiony, positionz, rotationx, rotationy, rotationz, scalex, scaley, scalez, color, opacity, textureURL, mass, linearvelocityx, linearvelocityy, linearvelocityz, angularvelocityx, angularvelocityy, angularvelocityz, friction, restitution, collision, id) {
     objectGeometry.vertices.forEach(function(v) {
       v.x = v.x * scalex;
       v.y = v.y * scaley;
@@ -624,6 +624,10 @@ function initVR() {
     } else {
       var texture = new THREE.TextureLoader().load(textureURL);
       objectMaterial = new THREE.MeshPhongMaterial({color: color, map: texture, flatShading: true, side: THREE.DoubleSide});
+    }
+    objectMaterial.opacity = opacity;
+    if (opacity < 1) {
+      objectMaterial.transparent = true;
     }
     var object = new THREE.Mesh(objectGeometry, objectMaterial);
     if (shadows) {
@@ -731,6 +735,14 @@ function initVR() {
           break;
         case "color":
           object.material.color = new THREE.Color(value);
+          break;
+        case "opacity":
+          object.material.opacity = value;
+          if (value < 1) {
+            object.material.transparent = true;
+          } else {
+            object.material.transparent = false;
+          }
           break;
         default:
           removeObject(id);
