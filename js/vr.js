@@ -236,7 +236,7 @@ function initVR() {
     */
 
     navigator.getVRDisplays().then(function(vrDisplays) {
-        if (false && vrDisplays.length) {
+        if (vrDisplays.length) {
           vrDisplay = vrDisplays[0];
           controls = new THREE.VRControls(camera);
           vrDisplay.requestAnimationFrame(render);
